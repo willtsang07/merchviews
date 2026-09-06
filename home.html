@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>MERCHVIEWS</title>
+
+  <!-- DM Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+
+    /* =========================
+       RESET
+    ========================= */
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      font-family: "DM Sans", sans-serif;
+      font-optical-sizing: auto;
+      font-style: normal;
+
+      background: #f8fafc;
+      color: #000;
+    }
+
+
+    /* =========================
+       SNAP SCROLL
+    ========================= */
+
+    .page {
+      width: 100%;
+      height: 100vh;
+
+      overflow-y: auto;
+
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+    }
+
+    .hero,
+    .second-section,
+    .third-section {
+      min-height: 100vh;
+
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+
+
+    /* =========================
+       HERO
+    ========================= */
+
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      min-height: 100vh;
+      padding: 40px 20px;
+
+      text-align: center;
+
+      background: #f8fafc;
+    }
+
+    .hero-content {
+      width: 100%;
+      max-width: 850px;
+
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin-bottom: 35px;
+
+      color: #000;
+
+      font-size: clamp(2.5rem, 7vw, 5.5rem);
+      line-height: 1.05;
+      font-weight: 800;
+      letter-spacing: -3px;
+    }
+
+
+    /* =========================
+       SHARED SECTION STYLES
+    ========================= */
+
+    .section-label {
+      display: inline-block;
+
+      margin-bottom: 16px;
+
+      color: #000;
+
+      font-size: 14px;
+      font-weight: 600;
+
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .second-content h2,
+    .third-content h2 {
+      margin-bottom: 20px;
+
+      color: #000;
+
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+
+    .second-content p,
+    .third-content p {
+      color: #000;
+      font-size: 18px;
+    }
+
+
+    /* =========================
+       SECOND SECTION
+       1 COLUMN / UNLIMITED IMAGES
+
+       Images retain their original
+       proportions.
+    ========================= */
+
+    .second-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      padding: 80px 0;
+
+      background: #f8fafc;
+
+      text-align: center;
+    }
+
+    .second-content {
+      width: 100%;
+      max-width: 1400px;
+    }
+
+    .second-image-grid {
+      width: 100%;
+      max-width: 1400px;
+
+      margin: 60px auto 0;
+      padding: 0 30px;
+
+      display: grid;
+      grid-template-columns: 1fr;
+
+      gap: 24px;
+    }
+
+    .second-image {
+      width: 100%;
+
+      display: block;
+
+      background: #f8fafc;
+
+      border: none;
+      border-radius: 0;
+
+      overflow: hidden;
+    }
+
+    .second-image img {
+      width: auto;
+      height: auto;
+
+      max-width: 100%;
+
+      display: block;
+
+      margin: 0 auto;
+    }
+
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 600px) {
+
+      .hero {
+        padding: 30px 18px;
+      }
+
+      h1 {
+        letter-spacing: -1.5px;
+      }
+
+      .second-section {
+        padding: 60px 0;
+      }
+
+      .second-image-grid {
+        gap: 16px;
+        padding: 0 18px;
+      }
+
+      .second-image img {
+        max-width: 100%;
+        height: auto;
+      }
+
+    }
+
+  </style>
+</head>
+
+
+<body>
+
+  <main class="page">
+
+
+    <!-- =========================
+         HERO SECTION
+    ========================= -->
+
+    <section class="hero">
+
+      <div class="hero-content">
+
+        <h1>
+          MERCHVIEWS
+        </h1>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         SECOND SECTION
+         ORIGINAL + UPLOADED IMAGES
+    ========================= -->
+
+    <section class="second-section">
+
+      <div class="second-content">
+
+        <div class="second-image-grid">
+
+          <!-- ORIGINAL IMAGE -->
+
+          <div class="second-image">
+
+            <img
+              src="screengrab-paper.png"
+              alt="Paper screengrab"
+            >
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+  </main>
+
+
+  <!-- =========================
+       LOAD UPLOADED IMAGES
+    ========================= -->
+
+  <script>
+
+    const uploadedImages = JSON.parse(
+      localStorage.getItem("merchviewsImages") || "[]"
+    );
+
+    const imageGrid = document.querySelector(".second-image-grid");
+
+    uploadedImages.forEach(function (imageSrc, index) {
+
+      const imageContainer = document.createElement("div");
+
+      imageContainer.className = "second-image";
+
+      const image = document.createElement("img");
+
+      image.src = imageSrc;
+
+      image.alt = "Uploaded image " + (index + 1);
+
+      imageContainer.appendChild(image);
+
+      imageGrid.appendChild(imageContainer);
+
+    });
+
+  </script>
+
+</body>
+</html>
