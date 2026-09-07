@@ -1,0 +1,239 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>MERCHVIEWS</title>
+
+  <!-- DM Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      background: #f8fafc;
+      color: #000;
+      font-family: "DM Sans", sans-serif;
+    }
+
+    .page {
+      width: 100%;
+      height: 100vh;
+      overflow-y: auto;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+    }
+
+    .hero {
+      width: 100%;
+      height: 100vh;
+      min-height: 100vh;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+
+    .hero-content {
+      width: 100%;
+      text-align: center;
+    }
+
+    .hero-title {
+      margin: 0;
+      font-size: clamp(48px, 9vw, 140px);
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+    }
+
+    .upload-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 48%;
+      height: 35px;
+
+      margin: 30px auto 0;
+
+      border: 1px solid #000;
+      border-radius: 5px;
+
+      background: transparent;
+      color: #000;
+
+      font-family: "DM Sans", sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+
+      cursor: pointer;
+
+      transition:
+        background-color 0.15s ease,
+        color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .upload-button:hover {
+      background: #000;
+      color: #fff;
+    }
+
+    .upload-button:focus-within {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
+    }
+
+    .upload-button input {
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .upload-button {
+        width: 48%;
+        height: 30px;
+        margin-top: 24px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="page">
+
+    <section class="hero">
+      <div class="hero-content">
+
+        <h1 class="hero-title">
+          MERCHVIEWS
+        </h1>
+
+        <label class="upload-button">
+          upload
+
+          <input
+            id="imageUpload"
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+          />
+        </label>
+
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    const imageUpload = document.getElementById("imageUpload");
+
+    imageUpload.addEventListener("change", async function () {
+      const file = this.files[0];
+
+      if (!file) return;
+
+      /*
+       * Only allow supported image formats.
+       */
+      const allowedTypes = [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ];
+
+      if (!allowedTypes.includes(file.type)) {
+        alert("Please select a PNG, JPG, or WebP image.");
+        this.value = "";
+        return;
+      }
+
+      /*
+       * Basic file-size protection.
+       * This can be adjusted later if needed.
+       */
+      const maxFileSize = 10 * 1024 * 1024; // 10 MB
+
+      if (file.size > maxFileSize) {
+        alert("Please select an image smaller than 10 MB.");
+        this.value = "";
+        return;
+      }
+
+      /*
+       * Send the image to the Netlify Function.
+       *
+       * The Netlify Function will then:
+       *
+       * upload-image.js
+       *        ↓
+       * Cloudflare R2
+       *        ↓
+       * content/<filename>
+       */
+      const formData = new FormData();
+      formData.append("image", file);
+
+      try {
+        const response = await fetch(
+          "/.netlify/functions/upload-image",
+          {
+            method: "POST",
+            body: formData
+          }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            result.error || "Upload failed."
+          );
+        }
+
+        alert("Image uploaded successfully.");
+
+        /*
+         * Reset the file input so another image
+         * can be selected immediately.
+         */
+        imageUpload.value = "";
+
+      } catch (error) {
+        console.error("Upload error:", error);
+
+        alert(
+          error.message ||
+          "There was a problem uploading the image."
+        );
+
+        imageUpload.value = "";
+      }
+    });
+  </script>
+
+</body>
+</html>
+```
