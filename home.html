@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -7,6 +8,7 @@
   <title>MERCHVIEWS</title>
 
   <!-- DM Sans -->
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -57,8 +59,7 @@
     }
 
     .hero,
-    .second-section,
-    .third-section {
+    .second-section {
       min-height: 100vh;
 
       scroll-snap-align: start;
@@ -103,47 +104,10 @@
 
 
     /* =========================
-       SHARED SECTION STYLES
-    ========================= */
-
-    .section-label {
-      display: inline-block;
-
-      margin-bottom: 16px;
-
-      color: #000;
-
-      font-size: 14px;
-      font-weight: 600;
-
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
-
-    .second-content h2,
-    .third-content h2 {
-      margin-bottom: 20px;
-
-      color: #000;
-
-      font-size: clamp(2.5rem, 6vw, 5rem);
-      line-height: 1;
-      letter-spacing: -2px;
-    }
-
-    .second-content p,
-    .third-content p {
-      color: #000;
-      font-size: 18px;
-    }
-
-
-    /* =========================
        SECOND SECTION
-       1 COLUMN / UNLIMITED IMAGES
-
-       Images retain their original
-       proportions.
+       1 COLUMN
+       IMAGES RETAIN ORIGINAL
+       PROPORTIONS
     ========================= */
 
     .second-section {
@@ -232,94 +196,69 @@
     }
 
   </style>
-</head>
 
+</head>
 
 <body>
 
   <main class="page">
 
+```
+<!-- =========================
+     HERO SECTION
+========================= -->
 
-    <!-- =========================
-         HERO SECTION
-    ========================= -->
+<section class="hero">
 
-    <section class="hero">
+  <div class="hero-content">
 
-      <div class="hero-content">
+    <h1>
+      MERCHVIEWS
+    </h1>
 
-        <h1>
-          MERCHVIEWS
-        </h1>
+  </div>
 
-      </div>
-
-    </section>
+</section>
 
 
-    <!-- =========================
-         SECOND SECTION
-         ORIGINAL + UPLOADED IMAGES
-    ========================= -->
+<!-- =========================
+     SECOND SECTION
+     CONTENT IMAGES
+========================= -->
 
-    <section class="second-section">
+<section class="second-section">
 
-      <div class="second-content">
+  <div class="second-content">
 
-        <div class="second-image-grid">
+    <div class="second-image-grid">
 
-          <!-- ORIGINAL IMAGE -->
+      <!-- ORIGINAL IMAGE -->
 
-          <div class="second-image">
+      <div class="second-image">
 
-            <img
-              src="/content/screengrab-paper.png"
-              alt="Paper screengrab"
-            >
-
-          </div>
-
-        </div>
+        <img
+          src="/content/screengrab-paper.png"
+          alt="Paper screengrab"
+        >
 
       </div>
 
-    </section>
 
+      <!--
+        ADDITIONAL CONTENT IMAGES
+        WILL BE ADDED HERE LATER
+        BY THE UPLOAD SYSTEM.
+      -->
+
+
+    </div>
+
+  </div>
+
+</section>
+```
 
   </main>
-
-
-  <!-- =========================
-       LOAD UPLOADED IMAGES
-    ========================= -->
-
-  <script>
-
-    const uploadedImages = JSON.parse(
-      localStorage.getItem("merchviewsImages") || "[]"
-    );
-
-    const imageGrid = document.querySelector(".second-image-grid");
-
-    uploadedImages.forEach(function (imageSrc, index) {
-
-      const imageContainer = document.createElement("div");
-
-      imageContainer.className = "second-image";
-
-      const image = document.createElement("img");
-
-      image.src = imageSrc;
-
-      image.alt = "Uploaded image " + (index + 1);
-
-      imageContainer.appendChild(image);
-
-      imageGrid.appendChild(imageContainer);
-
-    });
-
-  </script>
 
 </body>
 </html>

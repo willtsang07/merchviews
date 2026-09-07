@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -7,6 +8,7 @@
   <title>MERCHVIEWS</title>
 
   <!-- DM Sans -->
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -57,7 +59,6 @@
     }
 
     .hero,
-    .second-section,
     .third-section {
       min-height: 100vh;
 
@@ -103,7 +104,7 @@
 
 
     /* =========================
-       SHARED SECTION STYLES
+       SECTION LABEL
     ========================= */
 
     .section-label {
@@ -118,23 +119,6 @@
 
       text-transform: uppercase;
       letter-spacing: 2px;
-    }
-
-    .second-content h2,
-    .third-content h2 {
-      margin-bottom: 20px;
-
-      color: #000;
-
-      font-size: clamp(2.5rem, 6vw, 5rem);
-      line-height: 1;
-      letter-spacing: -2px;
-    }
-
-    .second-content p,
-    .third-content p {
-      color: #000;
-      font-size: 18px;
     }
 
 
@@ -242,171 +226,144 @@
     }
 
   </style>
-</head>
 
+</head>
 
 <body>
 
   <main class="page">
 
+```
+<!-- =========================
+     HERO SECTION
+========================= -->
 
-    <!-- =========================
-         HERO SECTION
-    ========================= -->
+<section class="hero">
 
-    <section class="hero">
+  <div class="hero-content">
 
-      <div class="hero-content">
+    <h1>
+      MERCHVIEWS
+    </h1>
 
-        <h1>
-          MERCHVIEWS
-        </h1>
+  </div>
 
-      </div>
-
-    </section>
-
-
-    <!-- =========================
-         THIRD SECTION
-         ORIGINAL + UPLOADED IMAGES
-    ========================= -->
-
-    <section class="third-section">
-
-      <div class="third-content">
-
-        <span class="section-label">
-          Discover
-        </span>
+</section>
 
 
-        <div class="third-image-grid">
+<!-- =========================
+     ARCHIVE SECTION
+========================= -->
+
+<section class="third-section">
+
+  <div class="third-content">
+
+    <span class="section-label">
+      Discover
+    </span>
 
 
-          <!-- IMAGE 1
-               ORIGINAL -->
-
-          <div class="third-image">
-
-            <img
-              src="screengrab-paper.png"
-              alt="Paper screengrab"
-            >
-
-          </div>
+    <div class="third-image-grid">
 
 
-          <!-- IMAGE 2 -->
+      <!-- IMAGE 1
+           ORIGINAL -->
 
-          <div class="third-image">
-            Image 2
-          </div>
+      <div class="third-image">
 
-
-          <!-- IMAGE 3 -->
-
-          <div class="third-image">
-            Image 3
-          </div>
-
-
-          <!-- IMAGE 4 -->
-
-          <div class="third-image">
-            Image 4
-          </div>
-
-
-          <!-- IMAGE 5 -->
-
-          <div class="third-image">
-            Image 5
-          </div>
-
-
-          <!-- IMAGE 6 -->
-
-          <div class="third-image">
-            Image 6
-          </div>
-
-
-          <!-- IMAGE 7 -->
-
-          <div class="third-image">
-            Image 7
-          </div>
-
-
-          <!-- IMAGE 8 -->
-
-          <div class="third-image">
-            Image 8
-          </div>
-
-
-          <!-- IMAGE 9 -->
-
-          <div class="third-image">
-            Image 9
-          </div>
-
-
-          <!-- IMAGE 10
-               ORIGINAL -->
-
-          <div class="third-image">
-
-            <img
-              src="/content/screengrab-paper.png"
-              alt="Paper screengrab"
-            >
-
-          </div>
-
-
-        </div>
+        <img
+          src="/content/screengrab-paper.png"
+          alt="Paper screengrab"
+        >
 
       </div>
 
-    </section>
 
+      <!-- IMAGE 2 -->
+
+      <div class="third-image">
+        Image 2
+      </div>
+
+
+      <!-- IMAGE 3 -->
+
+      <div class="third-image">
+        Image 3
+      </div>
+
+
+      <!-- IMAGE 4 -->
+
+      <div class="third-image">
+        Image 4
+      </div>
+
+
+      <!-- IMAGE 5 -->
+
+      <div class="third-image">
+        Image 5
+      </div>
+
+
+      <!-- IMAGE 6 -->
+
+      <div class="third-image">
+        Image 6
+      </div>
+
+
+      <!-- IMAGE 7 -->
+
+      <div class="third-image">
+        Image 7
+      </div>
+
+
+      <!-- IMAGE 8 -->
+
+      <div class="third-image">
+        Image 8
+      </div>
+
+
+      <!-- IMAGE 9 -->
+
+      <div class="third-image">
+        Image 9
+      </div>
+
+
+      <!-- IMAGE 10
+           ORIGINAL -->
+
+      <div class="third-image">
+
+        <img
+          src="/content/screengrab-paper.png"
+          alt="Paper screengrab"
+        >
+
+      </div>
+
+
+      <!--
+        ADDITIONAL CONTENT IMAGES
+        WILL BE ADDED HERE LATER
+        BY THE UPLOAD SYSTEM.
+      -->
+
+
+    </div>
+
+  </div>
+
+</section>
+```
 
   </main>
-
-
-  <!-- =========================
-       LOAD UPLOADED IMAGES
-    ========================= -->
-
-  <script>
-
-    const uploadedImages = JSON.parse(
-      localStorage.getItem("merchviewsImages") || "[]"
-    );
-
-    const imageGrid = document.querySelector(".third-image-grid");
-
-    uploadedImages.forEach(function (imageSrc, index) {
-
-      const imageContainer = document.createElement("div");
-
-      imageContainer.className = "third-image";
-
-      const image = document.createElement("img");
-
-      image.src = imageSrc;
-
-      image.alt = "Uploaded image " + (index + 1);
-
-      imageContainer.appendChild(image);
-
-      imageGrid.appendChild(imageContainer);
-
-    });
-
-  </script>
 
 </body>
 </html>
