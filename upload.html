@@ -1,17 +1,17 @@
-```html
+<html>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>MERCHVIEWS</title>
+  <title>MERCHVIEWS — Upload</title>
 
   <!-- DM Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap"
     rel="stylesheet"
   >
 
@@ -25,97 +25,85 @@
       margin: 0;
       padding: 0;
       width: 100%;
-      height: 100%;
+      min-height: 100%;
+      font-family: "DM Sans", sans-serif;
+      background: #f8fafc;
+      color: #000;
     }
 
     body {
-      background: #f8fafc;
-      color: #000;
-      font-family: "DM Sans", sans-serif;
-    }
-
-    .page {
-      width: 100%;
-      height: 100vh;
-      overflow-y: auto;
-      scroll-snap-type: y mandatory;
-      scroll-behavior: smooth;
+      min-height: 100vh;
     }
 
     .hero {
       width: 100%;
       height: 100vh;
-      min-height: 100vh;
-
+      min-height: 600px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-
-      scroll-snap-align: start;
-      scroll-snap-stop: always;
+      padding: 30px;
     }
 
-    .hero-content {
-      width: 100%;
+    .title {
+      margin: 0 0 45px;
+      font-size: clamp(48px, 8vw, 120px);
+      line-height: 0.95;
+      font-weight: 500;
+      letter-spacing: -0.06em;
       text-align: center;
     }
 
-    .hero-title {
-      margin: 0;
-      font-size: clamp(48px, 9vw, 140px);
-      font-weight: 700;
-      line-height: 0.95;
-      letter-spacing: -0.06em;
+    .upload-wrapper {
+      width: 48%;
+      max-width: 700px;
     }
 
-    .upload-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      width: 48%;
-      height: 35px;
-
-      margin: 30px auto 0;
-
+    #uploadButton {
+      width: 100%;
+      height: 55px;
+      padding: 0 20px;
       border: 1px solid #000;
       border-radius: 5px;
-
       background: transparent;
       color: #000;
-
-      font-family: "DM Sans", sans-serif;
-      font-size: 14px;
+      font-family: inherit;
+      font-size: 16px;
       font-weight: 500;
-
       cursor: pointer;
-
-      transition:
-        background-color 0.15s ease,
-        color 0.15s ease,
-        box-shadow 0.15s ease;
     }
 
-    .upload-button:hover {
+    #uploadButton:hover {
       background: #000;
       color: #fff;
     }
 
-    .upload-button:focus-within {
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
+    #uploadButton:disabled {
+      opacity: 0.5;
+      cursor: wait;
     }
 
-    .upload-button input {
+    #imageUpload {
       display: none;
     }
 
-    @media (max-width: 600px) {
-      .upload-button {
+    @media (max-width: 700px) {
+      .hero {
+        padding: 20px;
+      }
+
+      .title {
+        margin-bottom: 35px;
+      }
+
+      .upload-wrapper {
         width: 48%;
-        height: 30px;
-        margin-top: 24px;
-        font-size: 13px;
+      }
+
+      #uploadButton {
+        height: 50px;
+        font-size: 15px;
       }
     }
   </style>
@@ -123,80 +111,67 @@
 
 <body>
 
-  <div class="page">
+  <main class="hero">
 
-    <section class="hero">
-      <div class="hero-content">
+    <h1 class="title">MERCHVIEWS</h1>
 
-        <h1 class="hero-title">
-          MERCHVIEWS
-        </h1>
+    <div class="upload-wrapper">
+      <input
+        id="imageUpload"
+        type="file"
+        accept="image/png,image/jpeg,image/webp"
+      />
 
-        <label class="upload-button">
-          upload
+      <button id="uploadButton" type="button">
+        Upload Image
+      </button>
+    </div>
 
-          <input
-            id="imageUpload"
-            type="file"
-            accept="image/png,image/jpeg,image/webp"
-          />
-        </label>
-
-      </div>
-    </section>
-
-  </div>
+  </main>
 
   <script>
     const imageUpload = document.getElementById("imageUpload");
+    const uploadButton = document.getElementById("uploadButton");
 
-    imageUpload.addEventListener("change", async function () {
-      const file = this.files[0];
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
-      if (!file) return;
+    const ALLOWED_TYPES = [
+      "image/png",
+      "image/jpeg",
+      "image/webp"
+    ];
 
-      /*
-       * Only allow supported image formats.
-       */
-      const allowedTypes = [
-        "image/png",
-        "image/jpeg",
-        "image/webp"
-      ];
+    uploadButton.addEventListener("click", () => {
+      imageUpload.click();
+    });
 
-      if (!allowedTypes.includes(file.type)) {
-        alert("Please select a PNG, JPG, or WebP image.");
-        this.value = "";
+    imageUpload.addEventListener("change", async () => {
+      const file = imageUpload.files[0];
+
+      if (!file) {
         return;
       }
 
-      /*
-       * Basic file-size protection.
-       * This can be adjusted later if needed.
-       */
-      const maxFileSize = 10 * 1024 * 1024; // 10 MB
-
-      if (file.size > maxFileSize) {
-        alert("Please select an image smaller than 10 MB.");
-        this.value = "";
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        alert("Only PNG, JPEG, and WebP images are allowed.");
+        imageUpload.value = "";
         return;
       }
 
-      /*
-       * Send the image to the Netlify Function.
-       *
-       * The Netlify Function will then:
-       *
-       * upload-image.js
-       *        ↓
-       * Cloudflare R2
-       *        ↓
-       * content/<filename>
-       */
-      const formData = new FormData();
-      formData.append("image", file);
+      if (file.size > MAX_FILE_SIZE) {
+        alert("Image is too large. Maximum size is 10 MB.");
+        imageUpload.value = "";
+        return;
+      }
+
+      uploadButton.disabled = true;
+      uploadButton.textContent = "Uploading...";
 
       try {
+        const formData = new FormData();
+
+        formData.append("image", file);
+
         const response = await fetch(
           "/.netlify/functions/upload-image",
           {
@@ -205,30 +180,50 @@
           }
         );
 
-        const result = await response.json();
+        /*
+         * Get the response as text first.
+         * This makes debugging much easier if Netlify
+         * returns an empty or non-JSON response.
+         */
+        const responseText = await response.text();
 
-        if (!response.ok) {
+        let data;
+
+        try {
+          data = JSON.parse(responseText);
+        } catch (jsonError) {
+          console.error("Invalid JSON response:", responseText);
+
           throw new Error(
-            result.error || "Upload failed."
+            "The server returned an invalid response. " +
+            "Check the Netlify function logs."
           );
         }
 
-        alert("Image uploaded successfully.");
+        if (!response.ok) {
+          throw new Error(
+            data.error || "Image upload failed."
+          );
+        }
 
-        /*
-         * Reset the file input so another image
-         * can be selected immediately.
-         */
-        imageUpload.value = "";
+        if (!data.success) {
+          throw new Error(
+            data.error || "Image upload failed."
+          );
+        }
+
+        console.log("Upload successful:", data);
+
+        alert("Image uploaded successfully.");
 
       } catch (error) {
         console.error("Upload error:", error);
 
-        alert(
-          error.message ||
-          "There was a problem uploading the image."
-        );
+        alert(error.message);
 
+      } finally {
+        uploadButton.disabled = false;
+        uploadButton.textContent = "Upload Image";
         imageUpload.value = "";
       }
     });
@@ -236,4 +231,3 @@
 
 </body>
 </html>
-```
