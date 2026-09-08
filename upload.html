@@ -65,7 +65,7 @@
       width: 100%;
       padding: 18px 24px;
       border: 1px solid #000;
-      background: transparent;
+      background: #fff;
       color: #000;
       font-family: "DM Sans", sans-serif;
       font-size: 16px;
@@ -80,15 +80,57 @@
 
     .selected-file {
       margin-top: 20px;
-      font-size: 14px;
       min-height: 20px;
+      font-size: 14px;
     }
 
     .instructions {
       margin-top: 30px;
       font-size: 14px;
-      line-height: 1.5;
+      line-height: 1.6;
       color: #555;
+    }
+
+    .github-button {
+      display: none;
+      width: 100%;
+      margin-top: 16px;
+      padding: 18px 24px;
+      border: 1px solid #000;
+      background: #000;
+      color: #fff;
+      font-family: "DM Sans", sans-serif;
+      font-size: 16px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .github-button:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    .reset-button {
+      display: none;
+      margin-top: 16px;
+      border: 0;
+      background: none;
+      font-family: "DM Sans", sans-serif;
+      font-size: 14px;
+      text-decoration: underline;
+      cursor: pointer;
+      color: #555;
+    }
+
+    .step {
+      display: none;
+      margin-top: 28px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .step strong {
+      color: #000;
     }
 
     @media (max-width: 600px) {
@@ -123,14 +165,33 @@
       />
 
       <button class="upload-button" id="uploadButton">
-        Upload Image
+        Select Image
       </button>
 
       <div class="selected-file" id="selectedFile"></div>
 
+      <a
+        class="github-button"
+        id="githubButton"
+        href="https://github.com/willtsang07/merchviews/upload/main/content"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Open GitHub Upload
+      </a>
+
+      <button class="reset-button" id="resetButton">
+        Choose another image
+      </button>
+
+      <div class="step" id="stepText">
+        On GitHub, drag your selected image into the upload area,
+        then click <strong>Commit changes</strong>.
+      </div>
+
       <div class="instructions">
-        Select an image, then add that image to the GitHub
-        <strong>content</strong> folder.
+        Images uploaded to GitHub's <strong>content</strong> folder
+        will automatically appear on Home and Archive.
       </div>
 
     </div>
@@ -141,52 +202,63 @@
     const fileInput = document.getElementById("fileInput");
     const uploadButton = document.getElementById("uploadButton");
     const selectedFile = document.getElementById("selectedFile");
+    const githubButton = document.getElementById("githubButton");
+    const resetButton = document.getElementById("resetButton");
+    const stepText = document.getElementById("stepText");
 
-    const GITHUB_UPLOAD_URL =
-      "https://github.com/willtsang07/merchviews/upload/main/content";
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+    const ALLOWED_TYPES = [
+      "image/png",
+      "image/jpeg",
+      "image/webp"
+    ];
 
     uploadButton.addEventListener("click", () => {
       fileInput.click();
     });
 
     fileInput.addEventListener("change", () => {
+
       const file = fileInput.files[0];
 
       if (!file) {
         return;
       }
 
-      const allowedTypes = [
-        "image/png",
-        "image/jpeg",
-        "image/webp"
-      ];
-
-      const maxFileSize = 10 * 1024 * 1024;
-
-      if (!allowedTypes.includes(file.type)) {
+      if (!ALLOWED_TYPES.includes(file.type)) {
         alert("Please select a PNG, JPEG, or WebP image.");
         fileInput.value = "";
         return;
       }
 
-      if (file.size > maxFileSize) {
-        alert("Image must be smaller than 10MB.");
+      if (file.size > MAX_FILE_SIZE) {
+        alert("Please select an image smaller than 10MB.");
         fileInput.value = "";
         return;
       }
 
-      selectedFile.textContent = file.name;
+      selectedFile.textContent =
+        "Selected: " + file.name;
 
-      const shouldOpenGitHub = confirm(
-        "Your image is ready.\n\n" +
-        "Click OK to open the GitHub content folder, " +
-        "where you can upload this image."
-      );
+      uploadButton.textContent = "Image Ready";
 
-      if (shouldOpenGitHub) {
-        window.open(GITHUB_UPLOAD_URL, "_blank");
-      }
+      githubButton.style.display = "block";
+      resetButton.style.display = "inline-block";
+      stepText.style.display = "block";
+    });
+
+    resetButton.addEventListener("click", () => {
+
+      fileInput.value = "";
+
+      selectedFile.textContent = "";
+
+      uploadButton.textContent = "Select Image";
+
+      githubButton.style.display = "none";
+      resetButton.style.display = "none";
+      stepText.style.display = "none";
     });
   </script>
 
