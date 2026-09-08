@@ -4,12 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>MERCHVIEWS</title>
+  <title>MERCHVIEWS — Archive</title>
 
+  <!-- DM Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap"
     rel="stylesheet"
   >
 
@@ -18,118 +19,168 @@
       box-sizing: border-box;
     }
 
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      font-family: "DM Sans", sans-serif;
-      background: #fff;
-      color: #000;
-    }
-
     html {
       scroll-behavior: smooth;
       scroll-snap-type: y mandatory;
     }
 
     body {
-      overflow-y: auto;
+      margin: 0;
+      font-family: "DM Sans", sans-serif;
+      color: #111;
+      background: #fff;
+      overflow-x: hidden;
     }
 
     .page {
-      width: 100vw;
+      width: 100%;
       min-height: 100vh;
     }
 
-    .hero,
-    .third-section {
-      min-height: 100vh;
-      scroll-snap-align: start;
-      scroll-snap-stop: always;
-    }
+    /* =========================
+       HERO
+    ========================= */
 
     .hero {
+      min-height: 100vh;
+
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
+
       padding: 40px;
       text-align: center;
     }
 
     .hero h1 {
       margin: 0;
+
       font-size: clamp(2.5rem, 7vw, 5.5rem);
       line-height: 0.95;
       font-weight: 800;
       letter-spacing: -3px;
     }
 
+    /* =========================
+       ARCHIVE SECTION
+    ========================= */
+
     .third-section {
+      min-height: 100vh;
+
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+
+      padding: 80px 0;
+
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 80px 0;
+
       background: #f8fafc;
     }
 
     .section-label {
       margin: 0;
+
       font-size: 14px;
-      font-weight: 500;
+      line-height: 1;
+      font-weight: 600;
+
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
 
+    /*
+      ==========================================
+      ARCHIVE = 5 COLUMNS
+      ==========================================
+    */
+
     .third-image-grid {
       width: 100%;
       max-width: 1400px;
+
       margin: 60px auto 0;
+
       padding: 0 30px;
 
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+
+      grid-template-columns:
+        repeat(5, 1fr);
+
       gap: 20px;
     }
 
+
     .third-image {
       width: 100%;
+
       aspect-ratio: 1 / 1;
+
       display: flex;
       justify-content: center;
       align-items: center;
+
       overflow: hidden;
+
       background: #fff;
     }
+
 
     .third-image img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+
       display: block;
+
+      object-fit: cover;
     }
 
-    .loading,
-    .empty,
-    .error {
+
+    /* =========================
+       STATUS
+    ========================= */
+
+    .status {
       grid-column: 1 / -1;
+
       width: 100%;
-      text-align: center;
+
       padding: 40px 20px;
-      font-size: 14px;
+
+      text-align: center;
+
+      font-size: 15px;
+      color: #666;
     }
 
     .error {
       color: #b00020;
     }
 
+
+    /* =========================
+       TABLET
+    ========================= */
+
     @media (max-width: 1000px) {
 
       .third-image-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns:
+          repeat(3, 1fr);
       }
+
     }
+
+
+    /* =========================
+       MOBILE
+    ========================= */
 
     @media (max-width: 600px) {
 
@@ -146,11 +197,17 @@
       }
 
       .third-image-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-        padding: 0 18px;
+
         margin-top: 40px;
+
+        padding: 0 18px;
+
+        gap: 12px;
+
+        grid-template-columns:
+          repeat(2, 1fr);
       }
+
     }
   </style>
 </head>
@@ -159,35 +216,51 @@
 
   <main class="page">
 
+    <!-- HERO -->
     <section class="hero">
       <h1>MERCHVIEWS</h1>
     </section>
 
+
+    <!-- ARCHIVE -->
     <section class="third-section">
 
       <h2 class="section-label">
         Discover
       </h2>
 
+
       <div
-        class="third-image-grid"
         id="imageGrid"
+        class="third-image-grid"
+        aria-live="polite"
       >
-        <div class="loading">
-          Loading...
+
+        <div class="status">
+          Loading images...
         </div>
+
       </div>
 
     </section>
 
   </main>
 
+
   <script>
+
+    /*
+      ==========================================
+      GITHUB CONTENT SOURCE
+      ==========================================
+    */
+
     const GITHUB_API =
       "https://api.github.com/repos/willtsang07/merchviews/contents/content";
 
     const imageGrid =
       document.getElementById("imageGrid");
+
 
     const IMAGE_EXTENSIONS = [
       ".jpg",
@@ -196,15 +269,31 @@
       ".webp"
     ];
 
+
+    /*
+      ==========================================
+      CHECK IMAGE FILE
+      ==========================================
+    */
+
     function isImage(file) {
 
       const name =
         file.name.toLowerCase();
 
       return IMAGE_EXTENSIONS.some(
-        extension => name.endsWith(extension)
+        extension =>
+          name.endsWith(extension)
       );
+
     }
+
+
+    /*
+      ==========================================
+      SORT IMAGES
+      ==========================================
+    */
 
     function sortImages(a, b) {
 
@@ -216,45 +305,79 @@
           sensitivity: "base"
         }
       );
+
     }
+
+
+    /*
+      ==========================================
+      LOAD GITHUB IMAGES
+      ==========================================
+    */
 
     async function loadImages() {
 
       try {
 
         const response =
-          await fetch(GITHUB_API);
+          await fetch(
+            GITHUB_API,
+            {
+              cache: "no-store"
+            }
+          );
+
 
         if (!response.ok) {
+
           throw new Error(
             "GitHub content could not be loaded."
           );
+
         }
+
 
         const files =
           await response.json();
 
+
+        /*
+          Only keep actual image files
+          inside /content.
+        */
+
         const images =
           files
-            .filter(
-              file =>
-                file.type === "file" &&
-                isImage(file)
+            .filter(file =>
+              file.type === "file" &&
+              isImage(file)
             )
             .sort(sortImages);
 
+
         imageGrid.innerHTML = "";
+
+
+        /*
+          No images
+        */
 
         if (images.length === 0) {
 
           imageGrid.innerHTML = `
-            <div class="empty">
+            <div class="status">
               No images have been uploaded yet.
             </div>
           `;
 
           return;
+
         }
+
+
+        /*
+          Build archive tiles
+        */
 
         images.forEach(file => {
 
@@ -264,36 +387,61 @@
           wrapper.className =
             "third-image";
 
+
           const image =
             document.createElement("img");
 
+
+          /*
+            SHA is added as a cache-buster
+            so updated images don't get
+            stuck in browser cache.
+          */
+
           image.src =
-            file.download_url;
+            `${file.download_url}?v=${encodeURIComponent(file.sha)}`;
+
 
           image.alt =
             file.name;
 
+
           image.loading =
             "lazy";
+
 
           wrapper.appendChild(image);
 
           imageGrid.appendChild(wrapper);
+
         });
 
-      } catch (error) {
+      }
+
+
+      catch (error) {
 
         console.error(error);
 
         imageGrid.innerHTML = `
-          <div class="error">
+          <div class="status error">
             Unable to load images from GitHub.
           </div>
         `;
+
       }
+
     }
 
+
+    /*
+      ==========================================
+      START
+      ==========================================
+    */
+
     loadImages();
+
   </script>
 
 </body>
