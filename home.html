@@ -6,6 +6,7 @@
 
   <title>MERCHVIEWS</title>
 
+  <!-- DM Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -43,31 +44,43 @@
       min-height: 100vh;
     }
 
-    .hero,
-    .second-section {
+    /* =========================
+       HERO
+       ========================= */
+
+    .hero {
       min-height: 100vh;
       scroll-snap-align: start;
       scroll-snap-stop: always;
-    }
 
-    .hero {
       display: flex;
       justify-content: center;
       align-items: center;
+
       padding: 40px;
       text-align: center;
     }
 
     .hero h1 {
       margin: 0;
+
       font-size: clamp(2.5rem, 7vw, 5.5rem);
       line-height: 0.95;
       font-weight: 800;
       letter-spacing: -3px;
     }
 
+    /* =========================
+       IMAGE SECTION
+       ========================= */
+
     .second-section {
+      min-height: 100vh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+
       padding: 80px 0;
+
       display: flex;
       justify-content: center;
       align-items: flex-start;
@@ -76,7 +89,9 @@
     .second-image-grid {
       width: 100%;
       max-width: 1400px;
+
       padding: 0 30px;
+
       display: grid;
       grid-template-columns: 1fr;
       gap: 24px;
@@ -84,6 +99,7 @@
 
     .second-image {
       width: 100%;
+
       display: flex;
       justify-content: center;
       align-items: center;
@@ -91,24 +107,38 @@
 
     .second-image img {
       display: block;
+
       width: auto;
       height: auto;
+
       max-width: 100%;
+
       margin: 0 auto;
     }
+
+    /* =========================
+       STATUS MESSAGES
+       ========================= */
 
     .loading,
     .empty,
     .error {
       width: 100%;
+
       text-align: center;
+
       padding: 40px 20px;
+
       font-size: 14px;
     }
 
     .error {
       color: #b00020;
     }
+
+    /* =========================
+       MOBILE
+       ========================= */
 
     @media (max-width: 600px) {
 
@@ -140,9 +170,18 @@
 
   <main class="page">
 
+    <!-- =========================
+         HERO
+         ========================= -->
+
     <section class="hero">
       <h1>MERCHVIEWS</h1>
     </section>
+
+
+    <!-- =========================
+         GITHUB CONTENT
+         ========================= -->
 
     <section class="second-section">
 
@@ -150,21 +189,30 @@
         class="second-image-grid"
         id="imageGrid"
       >
+
         <div class="loading">
           Loading...
         </div>
+
       </div>
 
     </section>
 
   </main>
 
+
   <script>
+    /* =========================
+       GITHUB CONTENT API
+       ========================= */
+
     const GITHUB_API =
       "https://api.github.com/repos/willtsang07/merchviews/contents/content";
 
+
     const imageGrid =
       document.getElementById("imageGrid");
+
 
     const IMAGE_EXTENSIONS = [
       ".jpg",
@@ -173,15 +221,26 @@
       ".webp"
     ];
 
+
+    /* =========================
+       CHECK IF FILE IS AN IMAGE
+       ========================= */
+
     function isImage(file) {
 
       const name =
         file.name.toLowerCase();
 
       return IMAGE_EXTENSIONS.some(
-        extension => name.endsWith(extension)
+        extension =>
+          name.endsWith(extension)
       );
     }
+
+
+    /* =========================
+       SORT IMAGES
+       ========================= */
 
     function sortImages(a, b) {
 
@@ -195,6 +254,11 @@
       );
     }
 
+
+    /* =========================
+       LOAD GITHUB IMAGES
+       ========================= */
+
     async function loadImages() {
 
       try {
@@ -202,14 +266,30 @@
         const response =
           await fetch(GITHUB_API);
 
+
         if (!response.ok) {
+
           throw new Error(
             "GitHub content could not be loaded."
           );
         }
 
+
         const files =
           await response.json();
+
+
+        /*
+         * Diagnostic information.
+         * This can be viewed in the browser
+         * Developer Tools console.
+         */
+
+        console.log(
+          "GitHub files:",
+          files
+        );
+
 
         const images =
           files
@@ -220,7 +300,21 @@
             )
             .sort(sortImages);
 
+
+        console.log(
+          "Images found:",
+          images
+        );
+
+
+        /* Clear Loading... */
+
         imageGrid.innerHTML = "";
+
+
+        /* =========================
+           NO IMAGES
+           ========================= */
 
         if (images.length === 0) {
 
@@ -233,34 +327,76 @@
           return;
         }
 
+
+        /* =========================
+           CREATE IMAGE ELEMENTS
+           ========================= */
+
         images.forEach(file => {
 
           const wrapper =
             document.createElement("div");
 
+
           wrapper.className =
             "second-image";
+
 
           const image =
             document.createElement("img");
 
+
+          /*
+           * GitHub provides the direct
+           * downloadable image URL.
+           */
+
           image.src =
             file.download_url;
+
 
           image.alt =
             file.name;
 
+
+          /*
+           * Lazy loading keeps Home
+           * fast when there are many images.
+           */
+
           image.loading =
             "lazy";
+
+
+          /*
+           * Diagnostic if an individual
+           * image fails to load.
+           */
+
+          image.onerror = () => {
+
+            console.error(
+              "Could not load image:",
+              file.name,
+              file.download_url
+            );
+          };
+
 
           wrapper.appendChild(image);
 
           imageGrid.appendChild(wrapper);
+
         });
+
 
       } catch (error) {
 
-        console.error(error);
+        console.error(
+          "GitHub image loading error:",
+          error
+        );
+
 
         imageGrid.innerHTML = `
           <div class="error">
@@ -270,7 +406,13 @@
       }
     }
 
+
+    /* =========================
+       START
+       ========================= */
+
     loadImages();
+
   </script>
 
 </body>
