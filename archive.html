@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -7,207 +6,136 @@
 
   <title>MERCHVIEWS</title>
 
-  <!-- DM Sans -->
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000&display=swap"
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap"
     rel="stylesheet"
   >
 
   <style>
-
-    /* =========================
-       RESET
-    ========================= */
-
     * {
-      margin: 0;
-      padding: 0;
       box-sizing: border-box;
     }
 
     html,
     body {
+      margin: 0;
+      padding: 0;
       width: 100%;
       height: 100%;
-    }
-
-    body {
       font-family: "DM Sans", sans-serif;
-      font-optical-sizing: auto;
-      font-style: normal;
-
-      background: #f8fafc;
+      background: #fff;
       color: #000;
     }
 
+    html {
+      scroll-behavior: smooth;
+      scroll-snap-type: y mandatory;
+    }
 
-    /* =========================
-       SNAP SCROLL
-    ========================= */
+    body {
+      overflow-y: auto;
+    }
 
     .page {
-      width: 100%;
-      height: 100vh;
-
-      overflow-y: auto;
-
-      scroll-snap-type: y mandatory;
-      scroll-behavior: smooth;
+      width: 100vw;
+      min-height: 100vh;
     }
 
     .hero,
     .third-section {
       min-height: 100vh;
-
       scroll-snap-align: start;
       scroll-snap-stop: always;
     }
 
-
-    /* =========================
-       HERO
-    ========================= */
-
     .hero {
       display: flex;
-      align-items: center;
       justify-content: center;
-
-      min-height: 100vh;
-      padding: 40px 20px;
-
+      align-items: center;
+      padding: 40px;
       text-align: center;
-
-      background: #f8fafc;
     }
 
-    .hero-content {
-      width: 100%;
-      max-width: 850px;
-
-      margin: 0 auto;
-    }
-
-    h1 {
-      margin-bottom: 35px;
-
-      color: #000;
-
+    .hero h1 {
+      margin: 0;
       font-size: clamp(2.5rem, 7vw, 5.5rem);
-      line-height: 1.05;
+      line-height: 0.95;
       font-weight: 800;
       letter-spacing: -3px;
     }
-
-
-    /* =========================
-       SECTION LABEL
-    ========================= */
-
-    .section-label {
-      display: inline-block;
-
-      margin-bottom: 16px;
-
-      color: #000;
-
-      font-size: 14px;
-      font-weight: 600;
-
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
-
-
-    /* =========================
-       THIRD SECTION
-       5 COLUMN IMAGE GRID
-    ========================= */
 
     .third-section {
       display: flex;
       flex-direction: column;
       align-items: center;
-
       padding: 80px 0;
-
       background: #f8fafc;
-
-      text-align: center;
     }
 
-    .third-content {
-      width: 100%;
+    .section-label {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     .third-image-grid {
       width: 100%;
       max-width: 1400px;
-
       margin: 60px auto 0;
       padding: 0 30px;
 
       display: grid;
-
       grid-template-columns: repeat(5, 1fr);
-
       gap: 20px;
     }
 
     .third-image {
       width: 100%;
-
       aspect-ratio: 1 / 1;
-
       display: flex;
-      align-items: center;
       justify-content: center;
-
-      background: #f8fafc;
-
-      border: none;
-      border-radius: 0;
-
+      align-items: center;
       overflow: hidden;
+      background: #fff;
     }
 
     .third-image img {
       width: 100%;
       height: 100%;
-
-      display: block;
-
       object-fit: cover;
+      display: block;
     }
 
+    .loading,
+    .empty,
+    .error {
+      grid-column: 1 / -1;
+      width: 100%;
+      text-align: center;
+      padding: 40px 20px;
+      font-size: 14px;
+    }
 
-    /* =========================
-       TABLET
-    ========================= */
+    .error {
+      color: #b00020;
+    }
 
     @media (max-width: 1000px) {
-
       .third-image-grid {
         grid-template-columns: repeat(3, 1fr);
       }
-
     }
 
-
-    /* =========================
-       MOBILE
-    ========================= */
-
     @media (max-width: 600px) {
-
       .hero {
         padding: 30px 18px;
       }
 
-      h1 {
+      .hero h1 {
         letter-spacing: -1.5px;
       }
 
@@ -217,153 +145,122 @@
 
       .third-image-grid {
         grid-template-columns: repeat(2, 1fr);
-
         gap: 12px;
-
         padding: 0 18px;
+        margin-top: 40px;
       }
-
     }
-
   </style>
-
 </head>
 
 <body>
 
   <main class="page">
 
-```
-<!-- =========================
-     HERO SECTION
-========================= -->
+    <section class="hero">
+      <h1>MERCHVIEWS</h1>
+    </section>
 
-<section class="hero">
+    <section class="third-section">
 
-  <div class="hero-content">
+      <h2 class="section-label">Discover</h2>
 
-    <h1>
-      MERCHVIEWS
-    </h1>
+      <div class="third-image-grid" id="imageGrid">
 
-  </div>
-
-</section>
-
-
-<!-- =========================
-     ARCHIVE SECTION
-========================= -->
-
-<section class="third-section">
-
-  <div class="third-content">
-
-    <span class="section-label">
-      Discover
-    </span>
-
-
-    <div class="third-image-grid">
-
-
-      <!-- IMAGE 1
-           ORIGINAL -->
-
-      <div class="third-image">
-
-        <img
-          src="/content/screengrab-paper.png"
-          alt="Paper screengrab"
-        >
+        <div class="loading">
+          Loading...
+        </div>
 
       </div>
 
-
-      <!-- IMAGE 2 -->
-
-      <div class="third-image">
-        Image 2
-      </div>
-
-
-      <!-- IMAGE 3 -->
-
-      <div class="third-image">
-        Image 3
-      </div>
-
-
-      <!-- IMAGE 4 -->
-
-      <div class="third-image">
-        Image 4
-      </div>
-
-
-      <!-- IMAGE 5 -->
-
-      <div class="third-image">
-        Image 5
-      </div>
-
-
-      <!-- IMAGE 6 -->
-
-      <div class="third-image">
-        Image 6
-      </div>
-
-
-      <!-- IMAGE 7 -->
-
-      <div class="third-image">
-        Image 7
-      </div>
-
-
-      <!-- IMAGE 8 -->
-
-      <div class="third-image">
-        Image 8
-      </div>
-
-
-      <!-- IMAGE 9 -->
-
-      <div class="third-image">
-        Image 9
-      </div>
-
-
-      <!-- IMAGE 10
-           ORIGINAL -->
-
-      <div class="third-image">
-
-        <img
-          src="/content/screengrab-paper.png"
-          alt="Paper screengrab"
-        >
-
-      </div>
-
-
-      <!--
-        ADDITIONAL CONTENT IMAGES
-        WILL BE ADDED HERE LATER
-        BY THE UPLOAD SYSTEM.
-      -->
-
-
-    </div>
-
-  </div>
-
-</section>
-```
+    </section>
 
   </main>
+
+  <script>
+    const GITHUB_API =
+      "https://api.github.com/repos/willtsang07/merchviews/contents/content";
+
+    const imageGrid = document.getElementById("imageGrid");
+
+    const IMAGE_EXTENSIONS = [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".webp"
+    ];
+
+    function isImage(file) {
+      const name = file.name.toLowerCase();
+
+      return IMAGE_EXTENSIONS.some(extension =>
+        name.endsWith(extension)
+      );
+    }
+
+    function sortImages(a, b) {
+      return a.name.localeCompare(
+        b.name,
+        undefined,
+        {
+          numeric: true,
+          sensitivity: "base"
+        }
+      );
+    }
+
+    async function loadImages() {
+      try {
+        const response = await fetch(GITHUB_API);
+
+        if (!response.ok) {
+          throw new Error("Could not load GitHub content.");
+        }
+
+        const files = await response.json();
+
+        const images = files
+          .filter(file => file.type === "file" && isImage(file))
+          .sort(sortImages);
+
+        imageGrid.innerHTML = "";
+
+        if (images.length === 0) {
+          imageGrid.innerHTML = `
+            <div class="empty">
+              No images have been uploaded yet.
+            </div>
+          `;
+          return;
+        }
+
+        images.forEach(file => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "third-image";
+
+          const image = document.createElement("img");
+
+          image.src = file.download_url;
+          image.alt = file.name;
+          image.loading = "lazy";
+
+          wrapper.appendChild(image);
+          imageGrid.appendChild(wrapper);
+        });
+
+      } catch (error) {
+        console.error(error);
+
+        imageGrid.innerHTML = `
+          <div class="error">
+            Unable to load images.
+          </div>
+        `;
+      }
+    }
+
+    loadImages();
+  </script>
 
 </body>
 </html>

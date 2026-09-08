@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>MERCHVIEWS</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+      font-family: "DM Sans", sans-serif;
+      background: #fff;
+      color: #000;
+    }
+
+    body {
+      min-height: 100vh;
+    }
+
+    .upload-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .title {
+      margin: 0;
+      font-size: clamp(48px, 8vw, 120px);
+      line-height: 0.9;
+      font-weight: 500;
+      letter-spacing: -0.06em;
+    }
+
+    .upload-wrapper {
+      width: 48%;
+      max-width: 700px;
+      margin-top: 60px;
+    }
+
+    #fileInput {
+      display: none;
+    }
+
+    .upload-button {
+      width: 100%;
+      padding: 18px 24px;
+      border: 1px solid #000;
+      background: transparent;
+      color: #000;
+      font-family: "DM Sans", sans-serif;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .upload-button:hover {
+      background: #000;
+      color: #fff;
+    }
+
+    .selected-file {
+      margin-top: 20px;
+      font-size: 14px;
+      min-height: 20px;
+    }
+
+    .instructions {
+      margin-top: 30px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #555;
+    }
+
+    @media (max-width: 600px) {
+      .upload-page {
+        padding: 30px 18px;
+      }
+
+      .title {
+        letter-spacing: -0.04em;
+      }
+
+      .upload-wrapper {
+        width: 100%;
+        margin-top: 45px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="upload-page">
+
+    <h1 class="title">MERCHVIEWS</h1>
+
+    <div class="upload-wrapper">
+
+      <input
+        type="file"
+        id="fileInput"
+        accept="image/png,image/jpeg,image/webp"
+      />
+
+      <button class="upload-button" id="uploadButton">
+        Upload Image
+      </button>
+
+      <div class="selected-file" id="selectedFile"></div>
+
+      <div class="instructions">
+        Select an image, then add that image to the GitHub
+        <strong>content</strong> folder.
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const uploadButton = document.getElementById("uploadButton");
+    const selectedFile = document.getElementById("selectedFile");
+
+    const GITHUB_UPLOAD_URL =
+      "https://github.com/willtsang07/merchviews/upload/main/content";
+
+    uploadButton.addEventListener("click", () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener("change", () => {
+      const file = fileInput.files[0];
+
+      if (!file) {
+        return;
+      }
+
+      const allowedTypes = [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ];
+
+      const maxFileSize = 10 * 1024 * 1024;
+
+      if (!allowedTypes.includes(file.type)) {
+        alert("Please select a PNG, JPEG, or WebP image.");
+        fileInput.value = "";
+        return;
+      }
+
+      if (file.size > maxFileSize) {
+        alert("Image must be smaller than 10MB.");
+        fileInput.value = "";
+        return;
+      }
+
+      selectedFile.textContent = file.name;
+
+      const shouldOpenGitHub = confirm(
+        "Your image is ready.\n\n" +
+        "Click OK to open the GitHub content folder, " +
+        "where you can upload this image."
+      );
+
+      if (shouldOpenGitHub) {
+        window.open(GITHUB_UPLOAD_URL, "_blank");
+      }
+    });
+  </script>
+
+</body>
+</html>
