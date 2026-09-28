@@ -286,94 +286,116 @@
 
 
   <script>
-
-    /* =========================
-       ELEMENTS
-    ========================= */
-
     const emailForm = document.getElementById("email-form");
     const codeForm = document.getElementById("code-form");
 
-    const emailInput = document.getElementById("email-input");
-    const codeInput = document.getElementById("code-input");
-
-    const status = document.getElementById("status");
-
-
-    /* =========================
-       USER EMAIL
-    ========================= */
+    const emailInput = document.querySelector("#email-form input");
+    const codeInput = document.querySelector("#code-form input");
 
     let userEmail = "";
 
+  /* =========================
+     SEND LOGIN CODE
+  ========================= */
+  
+  emailForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-    /* =========================
-       EMAIL SUBMISSION
-    ========================= */
+    userEmail = emailInput.value.trim().toLowerCase();
 
-    emailForm.addEventListener("submit", function(event) {
+    if (!userEmail) {
+      return;
+    }
 
-      event.preventDefault();
+    try {
+      const response = await fetch("/.netlify/functions/send-code", {
+        method: "POST",
 
-      userEmail = emailInput.value.trim().toLowerCase();
+        headers: {
+          "Content-Type": "application/json"
+        },
 
-      if (!userEmail) {
+        body: JSON.stringify({
+          email: userEmail
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error(data);
         return;
       }
 
       /*
-       * STEP 1 ONLY
-       *
-       * The email is currently stored locally.
-       *
-       * In Step 2, this submission will call
-       * the Netlify function that sends the
-       * login code through Resend.
-       */
+        Move to the code screen.
 
-      console.log("Email submitted:", userEmail);
+        The server intentionally returns success even
+        when an email isn't approved, so the login page
+        does not reveal which email addresses are allowed.
+      */
 
-
-      /* Hide email input */
       emailForm.style.display = "none";
-
-
-      /* Show code input */
       codeForm.style.display = "block";
 
-
-      /* Focus code input */
       codeInput.focus();
 
-    });
+    } catch (error) {
+      console.error("Unable to send login code:", error);
+    }
+  });
 
+  /* =========================
+     VERIFY LOGIN CODE
+  ========================= */
 
-    /* =========================
-       CODE SUBMISSION
-    ========================= */
+  codeForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-    codeForm.addEventListener("submit", function(event) {
+    const code = codeInput.value.trim();
 
-      event.preventDefault();
+    if (!/^\d{6}$/.test(code)) {
+      return;
+    }
 
-      const code = codeInput.value.trim();
+    try {
+      const response = await fetch("/.netlify/functions/verify-code", {
+        method: "POST",
 
-      if (!/^\d{6}$/.test(code)) {
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          email: userEmail,
+          code: code
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error(data);
         return;
       }
 
-      /*
-       * STEP 4
-       *
-       * Code verification will be
-       * connected here later.
-       */
+      if (data.success) {
+        /*
+          Authentication will be completed here.
 
-      console.log("Code submitted:", code);
-      console.log("Email:", userEmail);
+          For now, this confirms that the email
+          and six-digit code were successfully verified.
+        */
 
-    });
+        console.log("Login successful.");
 
+        window.location.href = "/home";
+      }
+
+    } catch (error) {
+      console.error("Unable to verify login code:", error);
+    }
+  });
   </script>
 
 </body>
