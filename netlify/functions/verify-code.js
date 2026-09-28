@@ -1,4 +1,7 @@
 import { getStore } from "@netlify/blobs";
+import { randomBytes } from "node:crypto";
+
+const SESSION_EXPIRATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 function normalizeEmail(email) {
   return email.trim().toLowerCase();
@@ -33,10 +36,10 @@ export default async (request) => {
       );
     }
 
-    const store = getStore("login-codes");
+    const loginCodeStore = getStore("login-codes");
 
     // Retrieve the stored login code.
-    const loginData = await store.get(email, {
+    const loginData = await loginCodeStore.get(email, {
       type: "json"
     });
 
@@ -49,7 +52,7 @@ export default async (request) => {
 
     // Check whether the code has expired.
     if (Date.now() > loginData.expiresAt) {
-      await store.delete(email);
+      await loginCodeStore.delete(email);
 
       return Response.json(
         { error: "Invalid or expired code." },
@@ -65,12 +68,55 @@ export default async (request) => {
       );
     }
 
-    // Code is valid. Delete it so it cannot be reused.
-    await store.delete(email);
+    // Delete the login code so it cannot be reused.
+    await loginCodeStore.delete(email);
 
-    return Response.json({
-      success: true
+
+    /* =========================
+       CREATE LOGIN SESSION
+    ========================= */
+
+    // Generate a cryptographically secure random session token.
+    const sessionToken = randomBytes(32).toString("hex");
+
+    // Session expires after 7 days.
+    const expiresAt = Date.now() + SESSION_EXPIRATION_MS;
+
+    // Store the session server-side.
+    const sessionStore = getStore("login-sessions");
+
+    await sessionStore.setJSON(sessionToken, {
+      email,
+      expiresAt
     });
+
+
+    /* =========================
+       SET SECURE SESSION COOKIE
+    ========================= */
+
+    const cookie = [
+      `mv_session=${sessionToken}`,
+      "Path=/",
+      "HttpOnly",
+      "Secure",
+      "SameSite=Lax",
+      `Max-Age=${SESSION_EXPIRATION_MS / 1000}`
+    ].join("; ");
+
+
+    return new Response(
+      JSON.stringify({
+        success: true
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Set-Cookie": cookie
+        }
+      }
+    );
 
   } catch (error) {
     console.error("verify-code error:", error);

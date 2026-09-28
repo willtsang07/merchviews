@@ -454,6 +454,64 @@
 
     /*
       ==========================================
+      AUTHENTICATION CHECK
+      ==========================================
+    */
+
+    async function checkAuthentication() {
+
+      try {
+
+        const response =
+          await fetch(
+            "/.netlify/functions/check-session",
+            {
+              method: "GET",
+              credentials: "include"
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (
+          !response.ok ||
+          !data.authenticated
+        ) {
+
+          window.location.replace(
+            "/login"
+          );
+
+          return false;
+
+        }
+
+
+        return true;
+
+      } catch (error) {
+
+        console.error(
+          "Authentication check failed:",
+          error
+        );
+
+        window.location.replace(
+          "/login"
+        );
+
+        return false;
+
+      }
+
+    }
+
+
+    /*
+      ==========================================
       ELEMENTS
       ==========================================
     */
@@ -623,6 +681,15 @@
       "click",
       reset
     );
+
+
+    /*
+      ==========================================
+      START AUTHENTICATION CHECK
+      ==========================================
+    */
+
+    checkAuthentication();
 
   </script>
 
