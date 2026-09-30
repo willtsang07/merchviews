@@ -57,6 +57,56 @@
 
 
     /* =========================
+       LOGOUT BUTTON
+    ========================= */
+
+    .logout-button {
+      position: fixed;
+
+      top: 24px;
+      right: 24px;
+
+      width: 38px;
+      height: 38px;
+
+      display: none;
+      align-items: center;
+      justify-content: center;
+
+      padding: 0;
+
+      border: 1px solid #000;
+      border-radius: 50%;
+
+      background: #f8fafc;
+      color: #000;
+
+      cursor: pointer;
+
+      transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    .logout-button:hover {
+      background: #000;
+      color: #f8fafc;
+    }
+
+    .logout-button:active {
+      transform: scale(0.94);
+    }
+
+    .logout-button svg {
+      width: 17px;
+      height: 17px;
+
+      display: block;
+    }
+
+
+    /* =========================
        HERO
     ========================= */
 
@@ -195,6 +245,19 @@
         padding: 0 28px;
       }
 
+      .logout-button {
+        top: 16px;
+        right: 16px;
+
+        width: 34px;
+        height: 34px;
+      }
+
+      .logout-button svg {
+        width: 15px;
+        height: 15px;
+      }
+
     }
 
   </style>
@@ -202,6 +265,53 @@
 
 
 <body>
+
+  <!-- =========================
+       LOGOUT BUTTON
+  ========================= -->
+
+  <button
+    id="logout-button"
+    class="logout-button"
+    type="button"
+    aria-label="Sign out"
+    title="Sign out"
+  >
+
+    <!-- Log-out icon -->
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path
+        d="M14 8V6C14 4.89543 13.1046 4 12 4H5C3.89543 4 3 4.89543 3 5V19C3 20.1046 3.89543 21 5 21H12C13.1046 21 14 20.1046 14 19V17"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+
+      <path
+        d="M10 12H21"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+
+      <path
+        d="M18 9L21 12L18 15"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+
+  </button>
+
 
   <main class="page">
 
@@ -286,116 +396,269 @@
 
 
   <script>
-    const emailForm = document.getElementById("email-form");
-    const codeForm = document.getElementById("code-form");
 
-    const emailInput = document.querySelector("#email-form input");
-    const codeInput = document.querySelector("#code-form input");
+    const emailForm =
+      document.getElementById("email-form");
+
+    const codeForm =
+      document.getElementById("code-form");
+
+    const emailInput =
+      document.querySelector("#email-form input");
+
+    const codeInput =
+      document.querySelector("#code-form input");
+
+    const logoutButton =
+      document.getElementById("logout-button");
 
     let userEmail = "";
 
-  /* =========================
-     SEND LOGIN CODE
-  ========================= */
 
-  emailForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
+    /* =========================
+       CHECK CURRENT SESSION
+    ========================= */
 
-    userEmail = emailInput.value.trim().toLowerCase();
+    async function checkAuthentication() {
 
-    if (!userEmail) {
-      return;
-    }
+      try {
 
-    try {
-      const response = await fetch("/.netlify/functions/send-code", {
-        method: "POST",
+        const response =
+          await fetch(
+            "/.netlify/functions/check-session",
+            {
+              method: "GET",
+              credentials: "include"
+            }
+          );
 
-        headers: {
-          "Content-Type": "application/json"
-        },
+        const data =
+          await response.json();
 
-        body: JSON.stringify({
-          email: userEmail
-        })
-      });
+        if (
+          response.ok &&
+          data.authenticated
+        ) {
 
-      const data = await response.json();
+          /*
+            A valid session exists,
+            so show the sign-out button.
+          */
 
-      if (!response.ok) {
-        console.error(data);
-        return;
+          logoutButton.style.display =
+            "flex";
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Unable to check authentication:",
+          error
+        );
+
       }
 
-      /*
-        Move to the code screen.
-
-        The server intentionally returns success even
-        when an email isn't approved, so the login page
-        does not reveal which email addresses are allowed.
-      */
-
-      emailForm.style.display = "none";
-      codeForm.style.display = "block";
-
-      codeInput.focus();
-
-    } catch (error) {
-      console.error("Unable to send login code:", error);
-    }
-  });
-
-  /* =========================
-     VERIFY LOGIN CODE
-  ========================= */
-
-  codeForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const code = codeInput.value.trim();
-
-    if (!/^\d{6}$/.test(code)) {
-      return;
     }
 
-    try {
-      const response = await fetch("/.netlify/functions/verify-code", {
-        method: "POST",
 
-        headers: {
-          "Content-Type": "application/json"
-        },
+    /* =========================
+       SIGN OUT
+    ========================= */
 
-        body: JSON.stringify({
-          email: userEmail,
-          code: code
-        })
-      });
+    logoutButton.addEventListener(
+      "click",
+      async () => {
 
-      const data = await response.json();
+        try {
 
-      if (!response.ok) {
-        console.error(data);
-        return;
+          const response =
+            await fetch(
+              "/.netlify/functions/logout",
+              {
+                method: "POST",
+                credentials: "include"
+              }
+            );
+
+          if (response.ok) {
+
+            window.location.replace(
+              "/login"
+            );
+
+          }
+
+        } catch (error) {
+
+          console.error(
+            "Unable to sign out:",
+            error
+          );
+
+        }
+
       }
+    );
 
-      if (data.success) {
-        /*
-          Authentication will be completed here.
 
-          For now, this confirms that the email
-          and six-digit code were successfully verified.
-        */
+    /* =========================
+       SEND LOGIN CODE
+    ========================= */
 
-        console.log("Login successful.");
+    emailForm.addEventListener(
+      "submit",
+      async (event) => {
 
-        window.location.href = "/upload";
+        event.preventDefault();
+
+        userEmail =
+          emailInput.value
+            .trim()
+            .toLowerCase();
+
+        if (!userEmail) {
+          return;
+        }
+
+        try {
+
+          const response =
+            await fetch(
+              "/.netlify/functions/send-code",
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+
+                body: JSON.stringify({
+                  email: userEmail
+                })
+              }
+            );
+
+          const data =
+            await response.json();
+
+          if (!response.ok) {
+
+            console.error(data);
+
+            return;
+
+          }
+
+          /*
+            Move to the code screen.
+
+            The server intentionally returns success
+            even when an email isn't approved, so the
+            login page does not reveal which addresses
+            are allowed.
+          */
+
+          emailForm.style.display =
+            "none";
+
+          codeForm.style.display =
+            "block";
+
+          codeInput.focus();
+
+        } catch (error) {
+
+          console.error(
+            "Unable to send login code:",
+            error
+          );
+
+        }
+
       }
+    );
 
-    } catch (error) {
-      console.error("Unable to verify login code:", error);
-    }
-  });
+
+    /* =========================
+       VERIFY LOGIN CODE
+    ========================= */
+
+    codeForm.addEventListener(
+      "submit",
+      async (event) => {
+
+        event.preventDefault();
+
+        const code =
+          codeInput.value.trim();
+
+        if (!/^\d{6}$/.test(code)) {
+          return;
+        }
+
+        try {
+
+          const response =
+            await fetch(
+              "/.netlify/functions/verify-code",
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+
+                body: JSON.stringify({
+                  email: userEmail,
+                  code: code
+                })
+              }
+            );
+
+          const data =
+            await response.json();
+
+          if (!response.ok) {
+
+            console.error(data);
+
+            return;
+
+          }
+
+          if (data.success) {
+
+            console.log(
+              "Login successful."
+            );
+
+            window.location.href =
+              "/upload";
+
+          }
+
+        } catch (error) {
+
+          console.error(
+            "Unable to verify login code:",
+            error
+          );
+
+        }
+
+      }
+    );
+
+
+    /* =========================
+       INITIALIZE
+    ========================= */
+
+    checkAuthentication();
+
   </script>
 
 </body>
