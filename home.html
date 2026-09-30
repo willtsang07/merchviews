@@ -37,6 +37,59 @@
       min-height: 100vh;
     }
 
+
+    /* =========================
+       LOGOUT BUTTON
+    ========================= */
+
+    .logout-button {
+      position: fixed;
+
+      top: 24px;
+      right: 24px;
+
+      width: 38px;
+      height: 38px;
+
+      display: none;
+      align-items: center;
+      justify-content: center;
+
+      padding: 0;
+
+      border: 1px solid #000;
+      border-radius: 50%;
+
+      background: #fff;
+      color: #000;
+
+      cursor: pointer;
+
+      z-index: 1000;
+
+      transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    .logout-button:hover {
+      background: #000;
+      color: #fff;
+    }
+
+    .logout-button:active {
+      transform: scale(0.94);
+    }
+
+    .logout-button svg {
+      width: 17px;
+      height: 17px;
+
+      display: block;
+    }
+
+
     /* =========================
        HERO
     ========================= */
@@ -62,6 +115,7 @@
       font-weight: 800;
       letter-spacing: -3px;
     }
+
 
     /* =========================
        IMAGE SECTION
@@ -126,6 +180,7 @@
       margin: 0 auto;
     }
 
+
     /* =========================
        STATUS MESSAGES
     ========================= */
@@ -143,6 +198,7 @@
     .error {
       color: #b00020;
     }
+
 
     /* =========================
        MOBILE
@@ -170,11 +226,25 @@
       .second-image img {
         max-width: 100%;
       }
+
+      .logout-button {
+        top: 16px;
+        right: 16px;
+
+        width: 34px;
+        height: 34px;
+      }
+
+      .logout-button svg {
+        width: 15px;
+        height: 15px;
+      }
     }
   </style>
 </head>
 
 <body>
+
   <!-- =========================
        LOGOUT BUTTON
   ========================= -->
@@ -187,7 +257,6 @@
     title="Sign out"
   >
 
-    <!-- Log-out icon -->
     <svg
       viewBox="0 0 24 24"
       fill="none"
@@ -221,6 +290,7 @@
 
   </button>
 
+
   <main class="page">
 
     <!-- HERO -->
@@ -248,6 +318,107 @@
 
 
   <script>
+
+    /* =========================
+       SESSION / LOGOUT
+    ========================= */
+
+    const logoutButton =
+      document.getElementById("logout-button");
+
+
+    async function checkAuthentication() {
+
+      try {
+
+        const response =
+          await fetch(
+            "/.netlify/functions/check-session",
+            {
+              method: "GET",
+              credentials: "include"
+            }
+          );
+
+        const data =
+          await response.json();
+
+
+        /*
+          Only show the sign-out icon
+          when a valid session exists.
+        */
+
+        if (
+          response.ok &&
+          data.authenticated
+        ) {
+
+          logoutButton.style.display =
+            "flex";
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Unable to check authentication:",
+          error
+        );
+
+      }
+
+    }
+
+
+    logoutButton.addEventListener(
+      "click",
+      async () => {
+
+        try {
+
+          const response =
+            await fetch(
+              "/.netlify/functions/logout",
+              {
+                method: "POST",
+                credentials: "include"
+              }
+            );
+
+
+          if (response.ok) {
+
+            window.location.replace(
+              "/home"
+            );
+
+          }
+
+        } catch (error) {
+
+          console.error(
+            "Unable to sign out:",
+            error
+          );
+
+        }
+
+      }
+    );
+
+
+    /*
+      Check authentication immediately.
+
+      Home remains publicly accessible.
+      This only determines whether the
+      sign-out button should be displayed.
+    */
+
+    checkAuthentication();
+
+
     /*
       ==========================================
       GITHUB CONTENT SOURCE
@@ -257,7 +428,8 @@
     const GITHUB_API =
       "https://api.github.com/repos/willtsang07/merchviews/contents/content";
 
-    const imageGrid = document.getElementById("imageGrid");
+    const imageGrid =
+      document.getElementById("imageGrid");
 
     const IMAGE_EXTENSIONS = [
       ".jpg",
@@ -274,11 +446,15 @@
     */
 
     function isImage(file) {
-      const name = file.name.toLowerCase();
 
-      return IMAGE_EXTENSIONS.some(extension =>
-        name.endsWith(extension)
+      const name =
+        file.name.toLowerCase();
+
+      return IMAGE_EXTENSIONS.some(
+        extension =>
+          name.endsWith(extension)
       );
+
     }
 
 
@@ -286,22 +462,10 @@
       ==========================================
       SORT IMAGES
       ==========================================
-
-      This gives sensible ordering for filenames
-      such as:
-
-      image1
-      image2
-      image10
-
-      rather than:
-
-      image1
-      image10
-      image2
     */
 
     function sortImages(a, b) {
+
       return a.name.localeCompare(
         b.name,
         undefined,
@@ -310,6 +474,7 @@
           sensitivity: "base"
         }
       );
+
     }
 
 
@@ -323,30 +488,35 @@
 
       try {
 
-        const response = await fetch(
-          GITHUB_API,
-          {
-            cache: "no-store"
-          }
-        );
+        const response =
+          await fetch(
+            GITHUB_API,
+            {
+              cache: "no-store"
+            }
+          );
 
 
         if (!response.ok) {
+
           throw new Error(
             "GitHub content could not be loaded."
           );
+
         }
 
 
-        const files = await response.json();
+        const files =
+          await response.json();
 
 
-        const images = files
-          .filter(file =>
-            file.type === "file" &&
-            isImage(file)
-          )
-          .sort(sortImages);
+        const images =
+          files
+            .filter(file =>
+              file.type === "file" &&
+              isImage(file)
+            )
+            .sort(sortImages);
 
 
         imageGrid.innerHTML = "";
@@ -365,6 +535,7 @@
           `;
 
           return;
+
         }
 
 
@@ -378,31 +549,24 @@
           const wrapper =
             document.createElement("div");
 
-          wrapper.className = "second-image";
+          wrapper.className =
+            "second-image";
 
 
           const image =
             document.createElement("img");
 
 
-          /*
-            GitHub's download URL is used so
-            the image itself comes directly
-            from the repository.
-
-            Adding the SHA helps prevent an
-            old cached image from appearing
-            after an update.
-          */
-
           image.src =
             `${file.download_url}?v=${encodeURIComponent(file.sha)}`;
 
 
-          image.alt = file.name;
+          image.alt =
+            file.name;
 
 
-          image.loading = "lazy";
+          image.loading =
+            "lazy";
 
 
           wrapper.appendChild(image);
