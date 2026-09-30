@@ -43,6 +43,61 @@
 
 
     /* =========================
+       LOGOUT BUTTON
+    ========================= */
+
+    .logout-button {
+      position: fixed;
+
+      top: 24px;
+      right: 24px;
+
+      width: 38px;
+      height: 38px;
+
+      display: none;
+      align-items: center;
+      justify-content: center;
+
+      padding: 0;
+
+      border: 1px solid #000;
+      border-radius: 50%;
+
+      background: #fff;
+      color: #000;
+
+      cursor: pointer;
+
+      z-index: 1000;
+
+      transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+    }
+
+
+    .logout-button:hover {
+      background: #000;
+      color: #fff;
+    }
+
+
+    .logout-button:active {
+      transform: scale(0.94);
+    }
+
+
+    .logout-button svg {
+      width: 17px;
+      height: 17px;
+
+      display: block;
+    }
+
+
+    /* =========================
        HERO
     ========================= */
 
@@ -341,6 +396,25 @@
 
       }
 
+
+      .logout-button {
+
+        top: 16px;
+        right: 16px;
+
+        width: 34px;
+        height: 34px;
+
+      }
+
+
+      .logout-button svg {
+
+        width: 15px;
+        height: 15px;
+
+      }
+
     }
 
   </style>
@@ -360,13 +434,13 @@
     title="Sign out"
   >
 
-    <!-- Log-out icon -->
     <svg
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
+
       <path
         d="M14 8V6C14 4.89543 13.1046 4 12 4H5C3.89543 4 3 4.89543 3 5V19C3 20.1046 3.89543 21 5 21H12C13.1046 21 14 20.1046 14 19V17"
         stroke="currentColor"
@@ -390,9 +464,11 @@
         stroke-linecap="round"
         stroke-linejoin="round"
       />
+
     </svg>
 
   </button>
+
 
   <main class="page">
 
@@ -400,99 +476,101 @@
          HERO SECTION
     ========================= -->
 
-  <main class="hero">
+    <div class="hero">
 
-    <div class="upload-container">
+      <div class="upload-container">
 
-      <h1>
-        MERCHVIEWS
-      </h1>
-
-
-      <!--
-        The browser file picker is only used
-        to confirm/select the image.
-
-        The actual upload happens through
-        GitHub's own upload interface.
-      -->
-
-      <input
-        id="fileInput"
-        class="file-input"
-        type="file"
-        accept="image/png,image/jpeg,image/webp"
-      />
+        <h1>
+          MERCHVIEWS
+        </h1>
 
 
-      <label
-        for="fileInput"
-        class="button"
-        id="chooseButton"
-      >
-        Choose Image
-      </label>
+        <!--
+          The browser file picker is only used
+          to confirm/select the image.
+
+          The actual upload happens through
+          GitHub's own upload interface.
+        -->
+
+        <input
+          id="fileInput"
+          class="file-input"
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+        />
 
 
-      <div
-        id="fileName"
-        class="file-name"
-      ></div>
+        <label
+          for="fileInput"
+          class="button"
+          id="chooseButton"
+        >
+          Choose Image
+        </label>
 
 
-      <div
-        id="error"
-        class="error"
-      ></div>
+        <div
+          id="fileName"
+          class="file-name"
+        ></div>
 
 
-      <!--
-        Instructions become visible after
-        the user selects an image.
-      -->
-
-      <div
-        id="instructions"
-        class="instructions"
-      >
-
-        <p>
-          <strong>Next step:</strong>
-          GitHub will open its upload page.
-          Drag the image you just selected
-          into the upload area.
-        </p>
+        <div
+          id="error"
+          class="error"
+        ></div>
 
 
-        <p>
-          Make sure the file is being uploaded
-          to the <strong>content</strong> folder,
-          then click <strong>Commit changes</strong>.
-        </p>
+        <!--
+          Instructions become visible after
+          the user selects an image.
+        -->
+
+        <div
+          id="instructions"
+          class="instructions"
+        >
+
+          <p>
+            <strong>Next step:</strong>
+            GitHub will open its upload page.
+            Drag the image you just selected
+            into the upload area.
+          </p>
 
 
-        <div class="button-row">
+          <p>
+            Make sure the file is being uploaded
+            to the <strong>content</strong> folder,
+            then click <strong>Commit changes</strong>.
+          </p>
 
-          <a
-            id="githubButton"
-            class="button primary"
-            href="https://github.com/willtsang07/merchviews/upload/main/content"
-            target="_blank"
-            rel="noopener noreferrer"
+
+          <div class="button-row">
+
+            <a
+              id="githubButton"
+              class="button primary"
+              href="https://github.com/willtsang07/merchviews/upload/main/content"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Open GitHub Upload
+            </a>
+
+          </div>
+
+
+          <button
+            id="resetButton"
+            class="reset"
+            type="button"
           >
-            Open GitHub Upload
-          </a>
+            Choose another image
+          </button>
 
         </div>
-
-
-        <button
-          id="resetButton"
-          class="reset"
-          type="button"
-        >
-          Choose another image
-        </button>
 
       </div>
 
@@ -503,11 +581,15 @@
 
   <script>
 
-    /*
-      ==========================================
-      AUTHENTICATION CHECK
-      ==========================================
-    */
+    /* =========================
+       SESSION / LOGOUT
+    ========================= */
+
+    const logoutButton =
+      document.getElementById(
+        "logout-button"
+      );
+
 
     async function checkAuthentication() {
 
@@ -527,6 +609,13 @@
           await response.json();
 
 
+        /*
+          Upload is private.
+
+          A valid session is required
+          to remain on this page.
+        */
+
         if (
           !response.ok ||
           !data.authenticated
@@ -541,6 +630,15 @@
         }
 
 
+        /*
+          User is authenticated,
+          so display the sign-out icon.
+        */
+
+        logoutButton.style.display =
+          "flex";
+
+
         return true;
 
       } catch (error) {
@@ -550,15 +648,58 @@
           error
         );
 
+
         window.location.replace(
           "/login"
         );
+
 
         return false;
 
       }
 
     }
+
+
+    /* =========================
+       SIGN OUT
+    ========================= */
+
+    logoutButton.addEventListener(
+      "click",
+      async () => {
+
+        try {
+
+          const response =
+            await fetch(
+              "/.netlify/functions/logout",
+              {
+                method: "POST",
+                credentials: "include"
+              }
+            );
+
+
+          if (response.ok) {
+
+            window.location.replace(
+              "/login"
+            );
+
+          }
+
+        } catch (error) {
+
+          console.error(
+            "Unable to sign out:",
+            error
+          );
+
+        }
+
+      }
+    );
 
 
     /*
@@ -568,19 +709,33 @@
     */
 
     const fileInput =
-      document.getElementById("fileInput");
+      document.getElementById(
+        "fileInput"
+      );
+
 
     const fileName =
-      document.getElementById("fileName");
+      document.getElementById(
+        "fileName"
+      );
+
 
     const instructions =
-      document.getElementById("instructions");
+      document.getElementById(
+        "instructions"
+      );
+
 
     const resetButton =
-      document.getElementById("resetButton");
+      document.getElementById(
+        "resetButton"
+      );
+
 
     const error =
-      document.getElementById("error");
+      document.getElementById(
+        "error"
+      );
 
 
     /*
@@ -591,6 +746,7 @@
 
     const MAX_FILE_SIZE =
       10 * 1024 * 1024;
+
 
     const ALLOWED_TYPES = [
       "image/png",
@@ -610,7 +766,10 @@
       function () {
 
         error.textContent = "";
-        error.classList.remove("visible");
+
+        error.classList.remove(
+          "visible"
+        );
 
 
         const file =
@@ -636,6 +795,7 @@
             "Please choose a PNG, JPEG, or WebP image."
           );
 
+
           reset();
 
           return;
@@ -654,6 +814,7 @@
           showError(
             "The image must be smaller than 10 MB."
           );
+
 
           reset();
 
@@ -697,6 +858,7 @@
 
       error.textContent =
         message;
+
 
       error.classList.add(
         "visible"

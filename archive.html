@@ -37,6 +37,59 @@
       min-height: 100vh;
     }
 
+
+    /* =========================
+       LOGOUT BUTTON
+    ========================= */
+
+    .logout-button {
+      position: fixed;
+
+      top: 24px;
+      right: 24px;
+
+      width: 38px;
+      height: 38px;
+
+      display: none;
+      align-items: center;
+      justify-content: center;
+
+      padding: 0;
+
+      border: 1px solid #000;
+      border-radius: 50%;
+
+      background: #fff;
+      color: #000;
+
+      cursor: pointer;
+
+      z-index: 1000;
+
+      transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    .logout-button:hover {
+      background: #000;
+      color: #fff;
+    }
+
+    .logout-button:active {
+      transform: scale(0.94);
+    }
+
+    .logout-button svg {
+      width: 17px;
+      height: 17px;
+
+      display: block;
+    }
+
+
     /* =========================
        HERO
     ========================= */
@@ -63,6 +116,7 @@
       font-weight: 800;
       letter-spacing: -3px;
     }
+
 
     /* =========================
        ARCHIVE SECTION
@@ -94,11 +148,10 @@
       text-transform: uppercase;
     }
 
-    /*
-      ==========================================
-      ARCHIVE = 5 COLUMNS
-      ==========================================
-    */
+
+    /* =========================
+       ARCHIVE = 5 COLUMNS
+    ========================= */
 
     .third-image-grid {
       width: 100%;
@@ -208,11 +261,25 @@
           repeat(2, 1fr);
       }
 
+      .logout-button {
+        top: 16px;
+        right: 16px;
+
+        width: 34px;
+        height: 34px;
+      }
+
+      .logout-button svg {
+        width: 15px;
+        height: 15px;
+      }
+
     }
   </style>
 </head>
 
 <body>
+
   <!-- =========================
        LOGOUT BUTTON
   ========================= -->
@@ -225,7 +292,6 @@
     title="Sign out"
   >
 
-    <!-- Log-out icon -->
     <svg
       viewBox="0 0 24 24"
       fill="none"
@@ -258,6 +324,7 @@
     </svg>
 
   </button>
+
 
   <main class="page">
 
@@ -293,6 +360,108 @@
 
 
   <script>
+
+    /* =========================
+       SESSION / LOGOUT
+    ========================= */
+
+    const logoutButton =
+      document.getElementById("logout-button");
+
+
+    async function checkAuthentication() {
+
+      try {
+
+        const response =
+          await fetch(
+            "/.netlify/functions/check-session",
+            {
+              method: "GET",
+              credentials: "include"
+            }
+          );
+
+        const data =
+          await response.json();
+
+
+        /*
+          Archive is publicly accessible.
+
+          Only show the sign-out icon
+          when a valid session exists.
+        */
+
+        if (
+          response.ok &&
+          data.authenticated
+        ) {
+
+          logoutButton.style.display =
+            "flex";
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Unable to check authentication:",
+          error
+        );
+
+      }
+
+    }
+
+
+    logoutButton.addEventListener(
+      "click",
+      async () => {
+
+        try {
+
+          const response =
+            await fetch(
+              "/.netlify/functions/logout",
+              {
+                method: "POST",
+                credentials: "include"
+              }
+            );
+
+
+          if (response.ok) {
+
+            window.location.replace(
+              "/archive"
+            );
+
+          }
+
+        } catch (error) {
+
+          console.error(
+            "Unable to sign out:",
+            error
+          );
+
+        }
+
+      }
+    );
+
+
+    /*
+      Check authentication immediately.
+
+      Archive remains publicly accessible.
+      This only determines whether the
+      sign-out button should be displayed.
+    */
+
+    checkAuthentication();
+
 
     /*
       ==========================================
