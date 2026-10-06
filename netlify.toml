@@ -1,8 +1,5 @@
 toml
-[build]
-  command = "npm run build"
-  publish = "dist"
-  edge_functions = "netlify/edge-functions"
-
-[functions]
-  directory = "netlify/functions"
+command = "npm run build"
+publish = "dist"
+edge_functions = "netlify/edge-functions"
+directory = "netlify/functions"
