@@ -1,4 +1,3 @@
-toml
 command = "npm run build"
 publish = "dist"
 edge_functions = "netlify/edge-functions"
